@@ -1,9 +1,14 @@
-import { useEffect } from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  StatusBar
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Constants from 'expo-constants';
+import { Ionicons } from '@expo/vector-icons';
 
-const Home = ({ navigation }: { navigation: any }) => {
+export default function Home({ navigation }: any) {
   useEffect(() => {
     const timer = setTimeout(() => {
       navigation.navigate('Home1');
@@ -14,11 +19,24 @@ const Home = ({ navigation }: { navigation: any }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.frame}>
-        <Image source={require('../../../assets/fatec.png')} style={styles.logo} />
-        <Text style={styles.title}>App Scholar</Text>
-        <Text style={styles.subtitle}>Sistema de Gestão Acadêmica</Text>
-        <Text style={styles.loading}>Carregando...</Text>
+      <StatusBar backgroundColor="#2D3748" barStyle="light-content" />
+      
+      <View style={styles.content}>
+        <View style={styles.logoContainer}>
+          <Ionicons name="school" size={80} color="#FFFFFF" />
+        </View>
+        
+        <Text style={styles.title}>ScholarApp</Text>
+        <Text style={styles.subtitle}>Sistema Acadêmico Inteligente</Text>
+        
+        <View style={styles.loadingContainer}>
+          <Ionicons name="sync" size={24} color="#FFFFFF" />
+          <Text style={styles.loadingText}>Inicializando...</Text>
+        </View>
+      </View>
+
+      <View style={styles.footer}>
+        <Text style={styles.version}>Versão 1.0.0</Text>
       </View>
     </SafeAreaView>
   );
@@ -27,51 +45,60 @@ const Home = ({ navigation }: { navigation: any }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: Constants.statusBarHeight,
-    backgroundColor: '#dbdbda',
-    alignItems: 'center',
+    backgroundColor: '#2D3748',
+  },
+  content: {
+    flex: 1,
     justifyContent: 'center',
-    padding: 20,
-  },
-  frame: {
-    borderWidth: 2,
-    borderColor: '#909396',
-    padding: 20,
-    width: 320,
-    backgroundColor: '#dbdbda',
     alignItems: 'center',
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
+    padding: 24,
   },
-  logo: {
-    width: 200,
-    height: 200,
-    marginBottom: 20,
-    resizeMode: 'contain',
+  logoContainer: {
+    width: 120,
+    height: 120,
+    borderRadius: 30,
+    backgroundColor: '#4A6572',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
   title: {
-    color: '#3c3e36',
-    fontSize: 30,
+    fontSize: 32,
     fontWeight: 'bold',
-    marginBottom: 10,
+    color: '#FFFFFF',
+    marginBottom: 12,
     textAlign: 'center',
   },
   subtitle: {
-    color: '#666',
-    fontSize: 20,
-    marginBottom: 10,
+    fontSize: 18,
+    color: '#CBD5E0',
     textAlign: 'center',
+    marginBottom: 40,
   },
-  loading: {
-    color: '#999',
-    fontSize: 16,
-    fontStyle: 'italic',
-    marginTop: 10,
+  loadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  loadingText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    marginLeft: 8,
+  },
+  footer: {
+    padding: 24,
+    alignItems: 'center',
+  },
+  version: {
+    fontSize: 14,
+    color: '#CBD5E0',
   },
 });
-
-export default Home;

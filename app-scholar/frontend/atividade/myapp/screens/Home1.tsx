@@ -1,94 +1,113 @@
-import React from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import Constants from 'expo-constants';
+import React, { useEffect } from 'react';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  StatusBar,
+  ActivityIndicator
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 
-export default function Home1() {
-  const navigation = useNavigation();
+export default function Home1({ navigation }: any) {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      navigation.navigate('Login');
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [navigation]);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.frame}>
-        <Image source={require('../../../assets/fatec.png')} style={styles.logo} />
-        <Text style={styles.title}>APP SCHOLAR</Text>
-        <Text style={styles.subtitle}>Sistema de Gestão Acadêmica</Text>
+    <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor="#2D3748" barStyle="light-content" />
+      
+      <View style={styles.content}>
+        <View style={styles.iconContainer}>
+          <Ionicons name="rocket" size={60} color="#4A6572" />
+        </View>
         
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('Login' as never)}
-        >
-          <Text style={styles.buttonText}>ENTRAR</Text>
-        </TouchableOpacity>
+        <Text style={styles.title}>Quase lá!</Text>
+        <Text style={styles.subtitle}>Preparando sua experiência</Text>
+        
+        <View style={styles.loadingSection}>
+          <ActivityIndicator size="large" color="#4A6572" />
+          <Text style={styles.loadingText}>Carregando recursos...</Text>
+        </View>
 
-        <Text style={styles.footer}>
-          Desenvolvido para a disciplina de{'\n'}Programação para Dispositivos Móveis I
-        </Text>
+        <View style={styles.features}>
+          <View style={styles.featureItem}>
+            <Ionicons name="checkmark-circle" size={20} color="#38A169" />
+            <Text style={styles.featureText}>Sistema acadêmico</Text>
+          </View>
+          <View style={styles.featureItem}>
+            <Ionicons name="checkmark-circle" size={20} color="#38A169" />
+            <Text style={styles.featureText}>Gestão e acompanhamento de notas</Text>
+          </View>
+          <View style={styles.featureItem}>
+            <Ionicons name="checkmark-circle" size={20} color="#38A169" />
+            <Text style={styles.featureText}>Controle de disciplinas</Text>
+          </View>
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: Constants.statusBarHeight,
-    backgroundColor: '#dbdbda',
-    alignItems: 'center',
+    backgroundColor: '#F7FAFC',
+  },
+  content: {
+    flex: 1,
     justifyContent: 'center',
-    padding: 20,
-  },
-  frame: {
-    borderWidth: 2,
-    borderColor: '#909396',
-    padding: 20,
-    width: 320,
-    backgroundColor: '#dbdbda',
     alignItems: 'center',
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
+    padding: 24,
   },
-  logo: {
-    width: 200,
-    height: 200,
-    marginBottom: 20,
-    resizeMode: 'contain',
+  iconContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: 25,
+    backgroundColor: '#EDF2F7',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 24,
   },
   title: {
-    color: '#3c3e36',
-    fontSize: 30,
+    fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 10,
+    color: '#2D3748',
+    marginBottom: 12,
     textAlign: 'center',
   },
   subtitle: {
-    color: '#666',
-    fontSize: 20,
-    marginBottom: 30,
-    textAlign: 'center',
-  },
-  button: {
-    backgroundColor: 'yellow',
-    padding: 15,
-    borderRadius: 5,
-    width: '100%',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#CCCC00',
-    marginBottom: 20,
-  },
-  buttonText: {
-    color: 'black',
-    fontWeight: 'bold',
     fontSize: 16,
-  },
-  footer: {
-    color: '#666',
-    fontSize: 14,
+    color: '#718096',
     textAlign: 'center',
-    lineHeight: 16,
+    marginBottom: 40,
+  },
+  loadingSection: {
+    alignItems: 'center',
+    marginBottom: 40,
+  },
+  loadingText: {
+    fontSize: 14,
+    color: '#718096',
+    marginTop: 12,
+  },
+  features: {
+    width: '100%',
+    maxWidth: 200,
+  },
+  featureItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  featureText: {
+    fontSize: 14,
+    color: '#4A6572',
+    marginLeft: 8,
   },
 });

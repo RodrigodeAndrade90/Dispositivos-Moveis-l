@@ -21,6 +21,7 @@ export interface LoginResponse {
   message?: string;
 }
 
+// CORREÇÃO: Extender corretamente a Request do Express
 export interface AuthRequest extends Request {
   user?: {
     id: number;

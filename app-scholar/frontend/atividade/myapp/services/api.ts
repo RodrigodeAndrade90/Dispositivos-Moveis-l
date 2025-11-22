@@ -1,80 +1,97 @@
-const API_BASE_URL = 'http://192.168.18.14:3000/api';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export interface LoginData {
-  email: string;
-  senha: string;
-}
+const API_BASE_URL = 'http://192.168.1.16:3000/api'; // Seu IP
 
-export interface LoginResponse {
-  token: string;
-  perfil: string;
-  nome: string;
-  message?: string;
-}
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 15000,
+});
 
-class ApiService {
-  private token: string | null = null;
-
-  setToken(token: string) {
-    this.token = token;
+// Interceptor de requests
+api.interceptors.request.use(async (config) => {
+  const token = await AsyncStorage.getItem('@token');
+  if (token && config.headers) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
+  return config;
+});
 
-  async login(credentials: LoginData): Promise<LoginResponse> {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(credentials),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || 'Erro no login');
+// Interceptor de responses
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.log('❌ API Error:', error.response?.status, error.message);
+    if (error.response?.status === 401) {
+      AsyncStorage.removeItem('@token');
+      AsyncStorage.removeItem('@perfil');
     }
-
-    return await response.json();
+    return Promise.reject(error);
   }
+);
 
-  async validateToken(): Promise<any> {
-    if (!this.token) {
-      throw new Error('Token não disponível');
-    }
+export default {
+  // Autenticação
+  login: (email: string, senha: string) => 
+    api.post('/auth/login', { email, senha }),
 
-    const response = await fetch(`${API_BASE_URL}/auth/validate`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${this.token}`,
-        'Content-Type': 'application/json',
-      },
-    });
+  validateToken: () => 
+    api.get('/auth/validate'),
 
-    if (!response.ok) {
-      throw new Error('Token inválido');
-    }
+  getProfile: () => 
+    api.get('/auth/profile'),
 
-    return await response.json();
-  }
+  // Alunos
+  listAlunos: () => 
+    api.get('/alunos'),
 
-  async getProfile(): Promise<any> {
-    if (!this.token) {
-      throw new Error('Token não disponível');
-    }
+  createAluno: (payload: any) => 
+    api.post('/alunos', payload),
 
-    const response = await fetch(`${API_BASE_URL}/auth/profile`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${this.token}`,
-        'Content-Type': 'application/json',
-      },
-    });
+  // Professores
+  listProfessores: () => 
+    api.get('/professores'),
 
-    if (!response.ok) {
-      throw new Error('Erro ao buscar perfil');
-    }
+  createProfessor: (payload: any) => 
+    api.post('/professores', payload),
 
-    return await response.json();
-  }
-}
+  // Disciplinas
+  listDisciplinas: () => 
+    api.get('/disciplinas'),
 
-export default new ApiService();
+  createDisciplina: (payload: any) => 
+    api.post('/disciplinas', payload),
+
+  // Boletim - CORRIGIDO
+  boletimByAluno: (idAluno: number) => 
+    api.get(`/boletim/${idAluno}`),
+
+  // NOVO MÉTODO: Buscar boletim por nome do aluno
+  boletimByAlunoNome: (alunoNome: string) => 
+    api.get(`/boletim/nome/${encodeURIComponent(alunoNome)}`),
+
+  // NOTAS - NOVAS FUNÇÕES
+  getNotas: (alunoId: number, disciplinaId: number) =>
+    api.get(`/notas/${alunoId}/${disciplinaId}`),
+
+  saveNotas: (payload: any) =>
+    api.post('/notas', payload),
+
+  // Professor
+  getProfessorAlunos: () =>
+    api.get('/professor/alunos'),
+
+  getProfessorDisciplinas: () =>
+    api.get('/professor/disciplinas'),
+
+  // Cadastro e usuários
+  register: (payload: any) =>
+    api.post('/auth/register', payload),
+
+  listUsuarios: () =>
+    api.get('/usuarios'),
+
+  // Busca de alunos para sugestões (OPCIONAL)
+  buscarAlunos: (termo: string) =>
+    api.get(`/alunos/busca/${encodeURIComponent(termo)}`),
+};
