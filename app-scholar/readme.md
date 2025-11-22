@@ -25,7 +25,13 @@ Desenvolvido com **React Native (Expo)** no frontend e **Node.js + PostgreSQL** 
    DB_NAME=app_scholar
    JWT_SECRET=sua_chave_secreta
    ```
-4. Inicie o servidor:
+   
+4. Criar a tabela do banco do PostgreSQL:
+```bash
+   npm run create-tables
+   ```
+      
+5. Inicie o servidor:
    ```bash
    npm run dev
    ```
